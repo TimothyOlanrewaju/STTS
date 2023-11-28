@@ -38,7 +38,6 @@ function toggle(startOver = true){
 
 // Set the pitch, rate and texts to utter to the changed value
 function setOption() {
-  console.log(this.name, this.value);
   msg[this.name] = this.value;
   toggle();
 }
