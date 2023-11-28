@@ -7,7 +7,6 @@ const voicesDropdown = document.querySelector("[name=voice]");
 const options = document.querySelectorAll("[type=range], [name=text]");
 const speakBtn = document.querySelector("#speak");
 const stopBtn = document.querySelector("#stop");
-console.log(options);
 
 msg.text = document.querySelector("[name=text]").value;
 
