@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="app.js" defer></script> -->
+    <title>STTS</title>
+</head>
+<body class="overflow-y-hidden">
+    <div class="flex justify-center items-center h-screen bg-blue-200 ">
+        <div class="bg-gray-400 w-3/4 h-[120] md:w-1/2 md:h-[120]] p-3 items-center rounded-lg shadow shadow-blue-500 shadow-lg">
+            <h2 class=" text-2xl mt-2 pb-2 font-bold text-center md:text-3xl md:pb-2">Text to Speech</h1>
+                <div class="flex justify-center items-center w-full">
+                    <select name="voice" id="voices" class="w-44 rounded-lg px-4 py-1 md:w-60">
+                        <option value="">Select a Voice</option>
+                      </select>
+                </div>
+            <div class="max-w-6xl flex flex-col items-center pt-4 space-y-1 md:flex-row md:mb-1 md:space-x-4 md:space-y-0 md:justify-center ">
+                <div class="inline-flex">
+                    <label for="speed" class="pr-2 pb-2">Speed</label>
+                    <input type="range"  name="speed" min="0" max="3" value="1" step="0.1" />
+                </div>
+                <div class="inline-flex">
+                    <label for="pitch" class="pr-2">Pitch</label>
+                    <input type="range" name="pitch" min="0" max="3" value="1" step="0.1" />
+                </div>
+            </div>
+            <div class="flex justify-center items-center h-76 ">
+                <textarea name="text" placeholder="Enter your text here" class="p-4 w-3/4 mb-10 rounded-lg bg-gray-100 outline-none md:h-3/4 md:mb-8" name="" id="" cols="30" rows="10"></textarea>
+            </div>
+            <div class="btns flex justify-center gap-5 w-full ">
+                <button id="stop" class="bg-red-600 text-white px-3 py-2 w-28 rounded-lg transition duration-300 hover:bg-opacity-50 md:w-40">Stop</button>
+                <button id="speak" class="bg-green-600 text-white px-3 py-2 w-28 rounded-lg transition duration-300 hover:bg-opacity-50 md:w-40">Speak</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const msg = new SpeechSynthesisUtterance();
+        let voices = [];
+
+        const voicesDropdown = document.querySelector("[name=voice]");
+        const options = document.querySelectorAll("[type=range], [name=text]");
+        const speakBtn = document.querySelector("#speak");
+        const stopBtn = document.querySelector("#stop");
+
+        msg.text = document.querySelector("[name=text]").value;
+
+        // Push all available voices into the voices array
+        function populateVoices() {
+        voices = this.getVoices();
+
+        const voicesOption = voices
+            .map((voice) => {
+            return `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`;
+            })
+            .join("");
+        voicesDropdown.innerHTML = voicesOption;
+        }
+
+        // find a voice that's equal to the voice selected and change to it
+        function setVoice() {
+        msg.voice = voices.find((voice) => voice.name === this.value);
+        toggle(); //call the function for when a new voice is selected
+        }
+
+        // toggle function to either stop the ongoing speech and/or start a new one
+        function toggle(startOver = true){
+        speechSynthesis.cancel();
+        if (startOver) {
+            speechSynthesis.speak(msg);
+        }
+        };
+
+        // Set the pitch, rate and texts to utter to the changed value
+        function setOption() {
+        console.log(this.name, this.value);
+        msg[this.name] = this.value;
+        toggle();
+        }
+
+        speechSynthesis.addEventListener("voiceschanged", populateVoices);
+        voicesDropdown.addEventListener("change", setVoice); //listen for a change in the selected voice
+
+        options.forEach((option) => option.addEventListener("change", setOption));
+
+        speakBtn.addEventListener("click", toggle);
+        stopBtn.addEventListener("click", () => toggle(false)); //change the arg to false so it doesn't start over
+    </script>
+</body>
+</html>
